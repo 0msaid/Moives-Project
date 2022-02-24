@@ -3,7 +3,7 @@ import Joi from "joi";
 import React, { useState } from "react";
 
 export default function Register(props) {
-  let [errorList, setErrorList] = useState([]);
+  let [errorList, setErrorList] = useState("");
   let [error, setError] = useState("");
   let [isloading, setisloading] = useState(false);
   const [user, setuser] = useState({
@@ -28,8 +28,13 @@ export default function Register(props) {
 
     if (validateRespones.error) {
       setisloading(false);
-      setErrorList(validateRespones.error.details);
-       console.log(validateRespones.error.message);
+
+  let myerrorList= [...errorList];
+      for (let error of validateRespones.error.details) {
+        myerrorList[error.path] = error.message;
+      }
+      setErrorList(myerrorList);
+    
       
       
     } else {
@@ -56,7 +61,7 @@ export default function Register(props) {
       email: Joi.string()
         .email({ tlds: { allow: ["com", "net"] } })
         .required(),
-      password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,20}$")),
+      password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{6,12}$")),
     });
 
     return schema.validate(user, { abortEarly: false });
@@ -65,7 +70,7 @@ export default function Register(props) {
   return (
     <div>
       <div className="w-75 py-4 mx-auto">
-        <h2>Register now </h2>
+        <h2  className="text-center">Register now </h2>
 
         <form onSubmit={formSubmit}>
           {error && (
@@ -73,17 +78,8 @@ export default function Register(props) {
           )}
 
         
-
-          {errorList.map((error, index) =>
-            index === errorList.length-5? (
-              <div key={index} className="alert alert-danger m-auto py-2 w-75">
-               {error.message}
-            
-              </div>
-            ) : (
-              ""
-            )
-          )}
+         
+          
           <div className="py-2">
             <label htmlFor="first_name">frist_name</label>
             <input
@@ -92,18 +88,10 @@ export default function Register(props) {
               name="first_name"
               className="form-control"
             />
-            <div></div>
-            {errorList.map((error, index) =>
-            index === errorList.length-5? (
-              <div key={index} className="alert alert-danger m-auto py-2 w-75">
-                  {error.message}
-               
-                
-              </div>
-            ) : (
-              ""
-            )
-          )}
+            
+            {errorList.first_name && (
+              <div className="alert alert-danger m-auto w-75">{errorList.first_name}</div>
+            )}
           </div>
 
           <div className="py-2">
@@ -114,16 +102,9 @@ export default function Register(props) {
               name="last_name"
               className="form-control"
             />
-           {errorList.map((error, index) =>
-            index === errorList.length-4? (
-              <div key={index} className="alert alert-danger m-auto py-2 w-75">
-               {error.message}
-                
-              </div>
-            ) : (
-              ""
-            )
-          )}
+            {errorList.last_name && (
+              <div className="alert alert-danger m-auto w-75">{errorList.last_name}</div>
+            )}
           </div>
           <div className="py-2">
             <label htmlFor="age">age</label>
@@ -133,16 +114,9 @@ export default function Register(props) {
               name="age"
               className="form-control"
             />
-           {errorList.map((error, index) =>
-            index === errorList.length-3? (
-              <div key={index} className="alert alert-danger m-auto py-2 w-75">
-               {error.message}
-                
-              </div>
-            ) : (
-              ""
-            )
-          )}
+            {errorList.age && (
+              <div className="alert alert-danger m-auto w-75">{errorList.age}</div>
+            )}
           </div>
           <div className="py-2">
             <label htmlFor="email">email</label>
@@ -152,16 +126,9 @@ export default function Register(props) {
               name="email"
               className="form-control"
             />
-           {errorList.map((error, index) =>
-            index === errorList.length-2? (
-              <div key={index} className="alert alert-danger m-auto py-2 w-75">
-               {error.message}
-                
-              </div>
-            ) : (
-              ""
-            )
-          )}
+            {errorList.email && (
+              <div className="alert alert-danger m-auto w-75">{errorList.email}</div>
+            )}
           </div>
           <div className="py-2">
             <label htmlFor="password">password</label>
@@ -171,16 +138,9 @@ export default function Register(props) {
               name="password"
               className="form-control"
             />
-          {errorList.map((error, index) =>
-            index === errorList.length-1? (
-              <div key={index} className="alert alert-danger m-auto py-2 w-75">
-               {error.message}
-                
-              </div>
-            ) : (
-              ""
-            )
-          )}
+            {errorList.password && (
+              <div className="alert alert-danger m-auto w-75"> password is not allowed to be empty or not match, You must write more than 6 numbers or letters</div>
+            )}
           </div>
 
           <button type="submit" className="btn btn-info m-auto ">
